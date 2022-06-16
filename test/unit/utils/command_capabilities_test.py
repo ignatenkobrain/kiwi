@@ -40,13 +40,18 @@ class TestCommandCapabilities:
         assert not CommandCapabilities.has_option_in_help(
             'command', '--non-existing-flag'
         )
-        mock_run.assert_has_calls([
-            call(['command', '--help']),
-            call(['command', '--help']),
-            call(['command', 'subcommand', '-h']),
-            call(['chroot', 'root_dir', 'command', 'subcommand', '-h']),
-            call(['command', '--help'])
-        ])
+        mock_run.assert_has_calls(
+            [
+                call(['command', '--help'], raise_on_error=False),
+                call(['command', '--help'], raise_on_error=False),
+                call(['command', 'subcommand', '-h'], raise_on_error=False),
+                call(
+                    ['chroot', 'root_dir', 'command', 'subcommand', '-h'],
+                    raise_on_error=False
+                ),
+                call(['command', '--help'], raise_on_error=False)
+            ]
+        )
 
     @patch('kiwi.command.Command.run')
     def test_has_option_in_help_command_failure_warning(self, mock_run):

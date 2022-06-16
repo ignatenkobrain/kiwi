@@ -58,7 +58,7 @@ class CommandCapabilities:
         else:
             arguments = [call] + help_args
         try:
-            command = Command.run(arguments)
+            command = Command.run(arguments, raise_on_error=False)
             for line in command.output.splitlines():
                 if flag in line:
                     return True
