@@ -751,12 +751,21 @@ class DiskBuilder:
                                 filename=squashed_root_file.name,
                                 exclude=[Defaults.get_shared_cache_location()]
                             )
-                            # TODO
+                            readonly_target = device_map[map_name].get_device()
+                            readonly_target_bytesize = device_map[map_name].get_byte_size(
+                                readonly_target
+                            )
+                            log.info(
+                                '--> Dumping {0!r} file({1} bytes) -> {2}({3} bytes)'.format(
+                                    map_name, os.path.getsize(squashed_root_file.name),
+                                    readonly_target, readonly_target_bytesize
+                                )
+                            )
                             Command.run(
                                 [
                                     'dd',
                                     'if=%s' % squashed_root_file.name,
-                                    'of=%s' % device_map[map_name].get_device()
+                                    'of=%s' % readonly_target
                                 ]
                             )
                         else:
@@ -1258,7 +1267,6 @@ class DiskBuilder:
         for map_name in sorted(system_custom_parts.keys()):
             system_custom_part = system_custom_parts[map_name]
             log.info('--> Syncing custom partition(s) data')
-            # TODO
             if not system_custom_part.filename:
                 system_custom_part.sync_data()
             if device_map.get(f'{map_name}clone1'):
